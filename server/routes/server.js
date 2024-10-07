@@ -1,9 +1,8 @@
 require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const connectDB = require("./config/db");
-const authController = require("./authController");
-const verifyToken = require("./authMiddleware");
+import express, { json } from "express";
+import cors from "cors";
+import connectDB from "./config/db";
+
 
 // Skapa Express-appen
 const app = express();
@@ -13,14 +12,10 @@ connectDB();
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(json());
 
-// Autentiseringsrutter
-app.post("/api/auth/register", authController.register);
-app.post("/api/auth/login", authController.login);
 
-// Skyddade rutter
-app.use("/api/chat", verifyToken, require("./routes/chat"));
+
 
 
 
