@@ -1,17 +1,14 @@
-//@ts-nocheck
-"use client"
+// src/pages/Home.js
 import React from "react";
-import { useRouter } from "next/navigation";
+
 import { Card, CardContent, CardHeader } from "../components/ui/card";
 import styles from "./Home.module.css";
 
-const Home = () => {
-  const router = useRouter();
 
-  const handleClick = (e) => {
-    e.preventDefault();
-    // Redirect to /calendar page
-    router.push("/Calendar");
+const Login = () => {
+  const handleClick = () => {
+    //create new user with username
+    //navigate to  calendar page for user
   };
 
   return (
@@ -35,7 +32,7 @@ const Home = () => {
               type="text"
               placeholder="Enter your name"
               className={styles.nameInput}
-              required
+              required // Ensure input is filled
             />
             <button
               type="submit"
@@ -44,6 +41,7 @@ const Home = () => {
             >
               Start
             </button>
+
           </form>
         </CardContent>
       </Card>
@@ -54,4 +52,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Login;
