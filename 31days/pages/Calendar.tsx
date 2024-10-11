@@ -1,31 +1,32 @@
 //@ts-nocheck
 // src/pages/Calendar.tsx
-"use client";
-import React, { useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+"use client"
+import React, { useState, useEffect } from "react";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card"
+import MovieModal from "@/components/MovieModal"; // Import the MovieModal component
 import styles from "../app/Calendar.module.css";
 
 const Calendar = () => {
   const [selectedDoor, setSelectedDoor] = useState(null);
-  const [movieInfo, setMovieInfo] = useState(null);
+  const [movies, setMovies] = useState([]);
   const [finishedMovies, setFinishedMovies] = useState([]);
+  const [movieInfo, setMovieInfo] = useState(null);
+
+  useEffect(() => {
+    const fetchMovies = async () => {
+      const response = await fetch("http://localhost:3000/api/getMovies");
+      const data = await response.json();
+      setMovies(data);
+    };
+
+    fetchMovies();
+  }, []);
 
   const openDoor = (day) => {
     if (day <= new Date().getDate()) {
       setSelectedDoor(day);
-      fetchMovie(day);
+      setMovieInfo(movies[day - 1]); // Get the corresponding movie for the day
     }
-  };
-
-  const fetchMovie = (day) => {
-    const newMovie = {
-      title: `Movie Title for Day ${day}`,
-      description: "Movie Description",
-      posterUrl: "/path-to-movie-poster.jpg",
-    };
-    setMovieInfo(newMovie);
   };
 
   const handleAlreadySeen = () => {
@@ -55,24 +56,14 @@ const Calendar = () => {
         ))}
       </div>
 
-      {selectedDoor && movieInfo && (
-        <Dialog open={true} onOpenChange={() => setSelectedDoor(null)}>
-          <DialogContent className={styles.modal}>
-            <CardTitle>{movieInfo.title}</CardTitle>
-            <img
-              src={movieInfo.posterUrl}
-              alt={`${movieInfo.title} Poster`}
-              className="mb-4 rounded"
-            />
-            <CardContent>{movieInfo.description}</CardContent>
-            <Button onClick={handleFinished} className="mr-2">
-              Finished
-            </Button>
-            <Button variant="secondary" onClick={handleAlreadySeen}>
-              Already Seen
-            </Button>
-          </DialogContent>
-        </Dialog>
+      {selectedDoor && (
+        <MovieModal
+          open={true}
+          onClose={() => setSelectedDoor(null)}
+          movieInfo={movieInfo}
+          onFinished={handleFinished}
+          onAlreadySeen={handleAlreadySeen}
+        />
       )}
     </div>
   );
