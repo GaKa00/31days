@@ -1,5 +1,3 @@
-
-
 //@ts-nocheck
 import React from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -14,6 +12,8 @@ const MovieModal = ({
   onFinished,
   onAlreadySeen,
 }) => {
+  console.log("Movie Info in Modal:", movieInfo); // Log to confirm movieInfo is received
+
   if (!movieInfo) return null;
 
   return (
@@ -24,6 +24,8 @@ const MovieModal = ({
           src={movieInfo.imageUrl}
           alt={`${movieInfo.title} Poster`}
           className="mb-4 rounded"
+          width={300} // Adjust width and height as needed
+          height={450}
         />
         <CardContent>
           <p>{movieInfo.plot}</p>

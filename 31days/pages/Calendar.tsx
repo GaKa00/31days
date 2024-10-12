@@ -1,8 +1,8 @@
 //@ts-nocheck
 // src/pages/Calendar.tsx
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import MovieModal from "@/components/MovieModal"; // Import the MovieModal component
 import styles from "../app/Calendar.module.css";
 
@@ -11,21 +11,26 @@ const Calendar = () => {
   const [movies, setMovies] = useState([]);
   const [finishedMovies, setFinishedMovies] = useState([]);
   const [movieInfo, setMovieInfo] = useState(null);
+  const [loading, setLoading] = useState(true); // Loading state
 
   useEffect(() => {
     const fetchMovies = async () => {
       const response = await fetch("http://localhost:3000/api/getMovies");
       const data = await response.json();
+      console.log("API Response:", data); // Check API response data
       setMovies(data);
+      setLoading(false); // Set loading to false once movies are fetched
     };
 
     fetchMovies();
+    console.log("Movies fetched successfully");
   }, []);
 
   const openDoor = (day) => {
-    if (day <= new Date().getDate()) {
+    if (!loading && day <= new Date().getDate()) {
       setSelectedDoor(day);
-      setMovieInfo(movies[day - 1]); // Get the corresponding movie for the day
+      setMovieInfo(movies[day - 1]);
+      console.log("Selected Movie:", movies[day - 1]); // Log to check if the correct movie is being set
     }
   };
 
