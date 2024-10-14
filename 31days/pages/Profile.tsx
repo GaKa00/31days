@@ -1,33 +1,46 @@
 // src/pages/Profile.js
-import React from "react";
+//@ts-nocheck
+"use client"; // Add this line to enable client-side rendering in Next.js
+import React, { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import styles from "../app/Profile.module.css";
 
-const chapters = [
-  { id: 1, content: "Chapter 1 content", isLocked: false },
-  { id: 2, content: "Chapter 2 content", isLocked: true },
-];
-
 const Profile = () => {
+  const [chapters, setChapters] = useState([]);
+
+  useEffect(() => {
+    const fetchChapters = async () => {
+      const response = await fetch("/api/getStory");
+      if (response.ok) {
+        const data = await response.json();
+        setChapters(data);
+      } else {
+        console.error("Failed to fetch chapters");
+      }
+    };
+
+    fetchChapters();
+  }, []);
+
   return (
     <div className={styles.profileContainer}>
       <h1 className={styles.profileTitle}>Your Horror Story</h1>
       <div className={styles.chaptersContainer}>
         {chapters.map((chapter) => (
           <Card
-            key={chapter.id}
+            key={chapter.chapterNumber} // Use chapterNumber as key
             className={`${styles.chapterCard} ${
               chapter.isLocked ? styles.locked : ""
             }`}
           >
             <CardHeader>
-              <CardTitle>Chapter {chapter.id}</CardTitle>
+              <CardTitle>Chapter {chapter.chapterNumber}</CardTitle>
             </CardHeader>
             <CardContent>
               {chapter.isLocked ? (
                 <p className={styles.footer}>Locked</p>
               ) : (
-                <p>{chapter.content}</p>
+                <p>{chapter.text}</p> // Assuming chapter text is stored in 'text'
               )}
             </CardContent>
           </Card>

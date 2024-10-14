@@ -1,0 +1,28 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8); /* Dark overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it appears above other elements */
+}
+
+.modalContent {
+  background-color: #1a1a1a;
+  border: 3px solid #ff0000;
+  border-radius: 10px;
+  padding: 20px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.7);
+}
+
+.modalHeader {
+  color: #ff4040;
+  font-size: 2rem; /* Adjust header size */
+  margin-bottom: 1rem; /* Spacing between header and content */
+}

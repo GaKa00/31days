@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import MovieModal from "@/components/MovieModal"; // Import the MovieModal component
 import styles from "../app/Calendar.module.css";
+import { useRouter } from "next/navigation";
 
 const Calendar = () => {
   const [selectedDoor, setSelectedDoor] = useState(null);
@@ -13,9 +14,12 @@ const Calendar = () => {
   const [movieInfo, setMovieInfo] = useState(null);
   const [loading, setLoading] = useState(true); // Loading state
 
+
+    const router = useRouter();
+
   useEffect(() => {
     const fetchMovies = async () => {
-      const response = await fetch("http://localhost:3000/api/getMovies");
+      const response = await fetch("/api/getMovies"); // Use relative path
       const data = await response.json();
       console.log("API Response:", data); // Check API response data
       setMovies(data);
@@ -35,17 +39,49 @@ const Calendar = () => {
   };
 
   const handleAlreadySeen = () => {
-    fetchMovie(selectedDoor);
+    // Implement the logic for "Already Seen" if needed
+    console.log("Already Seen clicked");
   };
 
-  const handleFinished = () => {
-    setFinishedMovies([...finishedMovies, selectedDoor]);
+  const handleFinished = async (event) => {
+    event.preventDefault();
+    // Call the newChapter API
+    if (selectedDoor && movieInfo) {
+      const response = await fetch("/api/newChapter", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          
+        }),
+      });
+
+      if (response.ok) {
+        const newChapter = await response.json();
+        console.log("New Chapter Created:", newChapter); // Log the new chapter for debugging
+
+        // Optionally, you can update state or show a notification here
+      } else {
+        console.error("Failed to create a new chapter");
+      }
+    }
+
+    setFinishedMovies((prev) => [...prev, selectedDoor]);
     setSelectedDoor(null);
   };
+
+    const handleClick = (e) => {
+      e.preventDefault();
+      // Redirect to /calendar page
+      router.push("/Profile");
+    };
+
 
   return (
     <div className={styles.calendarContainer}>
       <h1 className={styles.calendarTitle}>October Horror Calendar</h1>
+      <h3 onClick={handleClick}>Profile</h3>
       <div className={styles.doorsContainer}>
         {[...Array(31).keys()].map((day) => (
           <Card
