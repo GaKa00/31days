@@ -38,7 +38,7 @@ export async function POST() {
     const aiResponse = await openai.chat.completions.create({
       model: "gpt-3.5-turbo", // Confirm this is a valid model
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 4000,
+      max_tokens: 3000,
     });
 
     // Log the full response for debugging
