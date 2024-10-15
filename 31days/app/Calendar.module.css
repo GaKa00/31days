@@ -71,3 +71,11 @@
 .modal p {
   margin: 10px 0;
 }
+
+.profileLink {
+  cursor: pointer;
+}
+
+.profileLink:hover {
+  text-decoration: underline;
+}

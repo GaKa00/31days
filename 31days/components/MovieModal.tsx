@@ -19,7 +19,7 @@ const MovieModal = ({
   onFinished,
   onAlreadySeen,
   warningMessage,
-  loading, // Accept loading prop
+  loadingModal,
 }) => {
   console.log("Movie Info in Modal:", movieInfo); // Log to confirm movieInfo is received
 
@@ -59,18 +59,14 @@ const MovieModal = ({
               <strong>Release Date:</strong> {movieInfo.releaseDate}
             </p>
           </CardContent>
-          {loading ? ( // Show loader or message when loading
-            <div className={styles.loader}>Loading...</div> // Or any spinner component
-          ) : (
-            <>
-              <Button onClick={onFinished} className="mr-2">
-                Finished
-              </Button>
-              <Button variant="secondary" onClick={onAlreadySeen}>
-                Already Seen
-              </Button>
-            </>
-          )}
+          <div>
+        <Button className={`${styles.modalButton} mr-2`} onClick={onFinished}>
+  {loadingModal ? 'Loading...' : 'Finished'}
+</Button>
+              
+           
+          
+          </div>
         </div>
       </div>
     </Dialog>

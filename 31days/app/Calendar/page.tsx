@@ -14,6 +14,7 @@ const Calendar = () => {
   const [finishedMovies, setFinishedMovies] = useState([]);
   const [movieInfo, setMovieInfo] = useState(null);
   const [loading, setLoading] = useState(true); // Loading state
+  const [loadingModal, setLoadingModal] = useState(false);
   // const [chapters, setChapters] = useState([]);
   const { chapters, setChapters } = useChapters();
 
@@ -56,6 +57,7 @@ const Calendar = () => {
     event.preventDefault();
     if (selectedDoor && movieInfo) {
       try {
+        setLoadingModal(true)
         const response = await fetch("/api/newChapter", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -77,7 +79,7 @@ const Calendar = () => {
         console.error("Error creating a new chapter:", error);
       }
     }
-    setLoading(false)
+    setLoadingModal(false)
     setSelectedDoor(null);
   };
 
@@ -90,7 +92,7 @@ const Calendar = () => {
   return (
     <div className={styles.calendarContainer}>
       <h1 className={styles.calendarTitle}>October Horror Calendar</h1>
-      <h3 onClick={handleClick}>Profile</h3>
+      <h3 onClick={handleClick} className={styles.profileLink}>Profile</h3>
       {loading ? (
         <p>Loading movies...</p> // Loading indicator
       ) : (
@@ -116,7 +118,7 @@ const Calendar = () => {
           onClose={() => setSelectedDoor(null)}
           movieInfo={movieInfo}
           onFinished={handleFinished}
-          onAlreadySeen={handleAlreadySeen}
+        loadingModal={loadingModal}
         />
       )}
     </div>
