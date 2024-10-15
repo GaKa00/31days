@@ -1,3 +1,5 @@
+
+
 //@ts-nocheck
 // src/pages/Calendar.tsx
 "use client";
@@ -13,17 +15,25 @@ const Calendar = () => {
   const [finishedMovies, setFinishedMovies] = useState([]);
   const [movieInfo, setMovieInfo] = useState(null);
   const [loading, setLoading] = useState(true); // Loading state
+  const [chapters, setChapters] = useState([]); 
 
-
-    const router = useRouter();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchMovies = async () => {
-      const response = await fetch("/api/getMovies"); // Use relative path
-      const data = await response.json();
-      console.log("API Response:", data); // Check API response data
-      setMovies(data);
-      setLoading(false); // Set loading to false once movies are fetched
+      try {
+        const response = await fetch("/api/getMovies"); // Use relative path
+        if (!response.ok) {
+          throw new Error("Failed to fetch movies");
+        }
+        const data = await response.json();
+        console.log("API Response:", data); // Check API response data
+        setMovies(data);
+      } catch (error) {
+        console.error("Error fetching movies:", error);
+      } finally {
+        setLoading(false); // Set loading to false once movies are fetched
+      }
     };
 
     fetchMovies();
@@ -42,60 +52,63 @@ const Calendar = () => {
     // Implement the logic for "Already Seen" if needed
     console.log("Already Seen clicked");
   };
-
-  const handleFinished = async (event) => {
-    event.preventDefault();
-    // Call the newChapter API
-    if (selectedDoor && movieInfo) {
+const handleFinished = async (event) => {
+  event.preventDefault();
+  if (selectedDoor && movieInfo) {
+    try {
       const response = await fetch("/api/newChapter", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          
-        }),
+        headers: { "Content-Type": "application/json" },
       });
 
       if (response.ok) {
-        const newChapter = await response.json();
-        console.log("New Chapter Created:", newChapter); // Log the new chapter for debugging
+        const updatedChapters = await response.json();
 
-        // Optionally, you can update state or show a notification here
+        // Only add the new chapter, don't overwrite the entire state
+        setChapters((prevChapters) => [
+          ...prevChapters,
+          updatedChapters[updatedChapters.length - 1],
+        ]);
+        setFinishedMovies((prev) => [...prev, selectedDoor]);
       } else {
         console.error("Failed to create a new chapter");
       }
+    } catch (error) {
+      console.error("Error creating a new chapter:", error);
     }
+  }
+  setSelectedDoor(null);
+};
 
-    setFinishedMovies((prev) => [...prev, selectedDoor]);
-    setSelectedDoor(null);
+
+  const handleClick = (e) => {
+    e.preventDefault();
+    // Redirect to /profile page
+    router.push("/Profile");
   };
-
-    const handleClick = (e) => {
-      e.preventDefault();
-      // Redirect to /calendar page
-      router.push("/Profile");
-    };
-
 
   return (
     <div className={styles.calendarContainer}>
       <h1 className={styles.calendarTitle}>October Horror Calendar</h1>
       <h3 onClick={handleClick}>Profile</h3>
-      <div className={styles.doorsContainer}>
-        {[...Array(31).keys()].map((day) => (
-          <Card
-            key={day}
-            className={`${styles.door} ${
-              finishedMovies.includes(day + 1) ? styles["door-open"] : ""
-            }`}
-          >
-            <CardHeader onClick={() => openDoor(day + 1)}>
-              <CardTitle>Day {day + 1}</CardTitle>
-            </CardHeader>
-          </Card>
-        ))}
-      </div>
+      {loading ? (
+        <p>Loading movies...</p> // Loading indicator
+      ) : (
+        <div className={styles.doorsContainer}>
+          {[...Array(31).keys()].map((day) => (
+            <Card
+              key={day}
+              className={`${styles.door} ${
+                finishedMovies.includes(day + 1) ? styles["door-open"] : ""
+              }`}
+            >
+              <CardHeader onClick={() => openDoor(day + 1)}>
+                <CardTitle>Day {day + 1}</CardTitle>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+      )}
 
       {selectedDoor && (
         <MovieModal

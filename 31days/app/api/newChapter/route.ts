@@ -11,7 +11,7 @@ const openai = new OpenAI({
 });
 
 // In-memory array to store chapters
-const chapters = [];
+let chapters = [];
 
 export async function POST() {
   try {
@@ -66,7 +66,6 @@ export async function POST() {
 
     const newChapter = {
       chapterNumber: nextChapterNumber,
-      movieTitle,
       text: newChapterText,
       createdAt: new Date(),
     };
@@ -76,9 +75,10 @@ export async function POST() {
 
     console.log("New Chapter Added to Array:", newChapter); // Log the chapter for debugging
 
-    return NextResponse.json(newChapter);
+  return NextResponse.json(chapters);
   } catch (error) {
     console.error("Error in creating a new chapter:", error);
     return NextResponse.error();
   }
 }
+
