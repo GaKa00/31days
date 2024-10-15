@@ -2,12 +2,13 @@
 //@ts-nocheck
 
 import { NextResponse } from "next/server";
-import  OpenAI from "openai";
+import  OpenAI from "openai";''
+
+const apiKey=process.env.OPENAI_KEY;
 
 // Configure OpenAI API
 const openai = new OpenAI({
-  apiKey:
-    "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",
+  apiKey:apiKey,
 });
 
 // In-memory array to store chapters
