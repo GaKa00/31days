@@ -1,13 +1,12 @@
-
-
 //@ts-nocheck
 // src/pages/Calendar.tsx
 "use client";
 import React, { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import MovieModal from "@/components/MovieModal"; // Import the MovieModal component
-import styles from "../app/Calendar.module.css";
+import styles from "../Calendar.module.css"
 import { useRouter } from "next/navigation";
+import { useChapters } from "@/app/context/ChaptersContext";
 
 const Calendar = () => {
   const [selectedDoor, setSelectedDoor] = useState(null);
@@ -15,7 +14,8 @@ const Calendar = () => {
   const [finishedMovies, setFinishedMovies] = useState([]);
   const [movieInfo, setMovieInfo] = useState(null);
   const [loading, setLoading] = useState(true); // Loading state
-  const [chapters, setChapters] = useState([]); 
+  // const [chapters, setChapters] = useState([]);
+  const { chapters, setChapters } = useChapters();
 
   const router = useRouter();
 
@@ -52,34 +52,34 @@ const Calendar = () => {
     // Implement the logic for "Already Seen" if needed
     console.log("Already Seen clicked");
   };
-const handleFinished = async (event) => {
-  event.preventDefault();
-  if (selectedDoor && movieInfo) {
-    try {
-      const response = await fetch("/api/newChapter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
+  const handleFinished = async (event) => {
+    event.preventDefault();
+    if (selectedDoor && movieInfo) {
+      try {
+        const response = await fetch("/api/newChapter", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
 
-      if (response.ok) {
-        const updatedChapters = await response.json();
+        if (response.ok) {
+          const updatedChapters = await response.json();
 
-        // Only add the new chapter, don't overwrite the entire state
-        setChapters((prevChapters) => [
-          ...prevChapters,
-          updatedChapters[updatedChapters.length - 1],
-        ]);
-        setFinishedMovies((prev) => [...prev, selectedDoor]);
-      } else {
-        console.error("Failed to create a new chapter");
+          // Only add the new chapter, don't overwrite the entire state
+          setChapters((prevChapters) => [
+            ...prevChapters,
+            updatedChapters[updatedChapters.length - 1],
+          ]);
+          setFinishedMovies((prev) => [...prev, selectedDoor]);
+        } else {
+          console.error("Failed to create a new chapter");
+        }
+      } catch (error) {
+        console.error("Error creating a new chapter:", error);
       }
-    } catch (error) {
-      console.error("Error creating a new chapter:", error);
     }
-  }
-  setSelectedDoor(null);
-};
-
+    setLoading(false)
+    setSelectedDoor(null);
+  };
 
   const handleClick = (e) => {
     e.preventDefault();
